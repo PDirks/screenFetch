@@ -173,6 +173,10 @@ colorNumberToCode() {
 			  13) code=$(getColor 'light purple');;
 			  14) code=$(getColor 'light cyan');;
 			  15) code=$(getColor 'white');;
+			# this block more focused at single colors, not really an easy way to send out an array from here
+			# we'll just set code to a speacial case and check for that special case when printing.
+			#	very hack-y solution, but it does the job
+			  16) code="16";;
 			*) unset code;;
 		esac
 	fi
@@ -2367,6 +2371,13 @@ asciiText () {
 				c3=$(getColor 'yellow') # Bold Yellow
 			fi
 			if [ -n "${my_lcolor}" ]; then c1="${my_lcolor}"; c2="${my_lcolor}"; c3="${my_lcolor}"; fi
+			# can't really send an array of colors without a big refactor of code, 
+			# 	we'll just check if we're at our special case 16
+			if [ "${my_lcolor}" == "16" ]; then
+				c1=$(getColor 'blue')
+				c2=$(getColor 'light blue')
+				c3=$(getColor 'white') 
+			fi
 			startline="0"
 			fulloutput=("$c2                          ./+o+-       %s"
 "$c1                  yyyyy- $c2-yyyyyy+     %s"
@@ -4084,6 +4095,10 @@ infoDisplay () {
 		"CentOS"|*) labelcolor=$(getColor 'yellow');;
 	esac
 	[[ "$my_lcolor" ]] && labelcolor="${my_lcolor}"
+	# fix the label colors if we're on mode 16
+	if [ "${my_lcolor}" == 16 ]; then 
+		labelcolor=$(getColor 'light blue') 
+	fi
 	if [[ "$art" ]]; then source "$art"; fi
 	if [[ "$no_color" == "1" ]]; then labelcolor=""; bold=""; c0=""; textcolor=""; fi
 	# Some verbosity stuff
